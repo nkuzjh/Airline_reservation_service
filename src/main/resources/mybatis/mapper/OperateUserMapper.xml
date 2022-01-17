@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.air.airbooking.mapper.OperateUserMapper">
+    <!--操作用户映射结果集-->
+    <resultMap id="operateUserResultMap" type="com.air.airbooking.pojo.OperateUser">
+        <id property="operateId" column="operate_id"/>
+        <result property="operateTel" column="operate_tel"/>
+        <result property="operateSurname" column="operate_surname"/>
+        <result property="operateUsername" column="operate_username"/>
+        <result property="operatePassword" column="operate_password"/>
+        <result property="operateRole" column="operate_role"/>
+        <result property="operateMember" column="operate_member"/>
+        <result property="operateStatus" column="operate_status"/>
+        <result property="operateUpdate" column="operate_update"/>
+    </resultMap>
+
+    <insert id="register" useGeneratedKeys="true" keyProperty="operateId">
+       insert into `operate_user` values (0,#{operateTel},#{operateSurname},#{operateUsername},#{operatePassword},default ,default ,default ,default )
+    </insert>
+
+    <select id="login" resultMap="operateUserResultMap">
+        select * from `operate_user` where `operate_tel`=#{operateTel} and `operate_password`=#{operatePassword}
+    </select>
+</mapper>

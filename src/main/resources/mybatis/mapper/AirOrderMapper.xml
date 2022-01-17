@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.air.airbooking.mapper.AirOrderMapper">
+    <!--订单记录结果集映射-->
+    <resultMap id="airOrderResultMap" type="com.air.airbooking.pojo.AirOrder">
+        <id property="orderId" column="order_id"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="orderUpdate" column="order_update"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="operatesId" column="operates_id"/>
+        <result property="cabinsId" column="cabins_id"/>
+        <result property="airlinesId" column="airlines_id"/>
+        <result property="flightsId" column="flights_id"/>
+        <result property="ticketsId" column="tickets_id"/>
+        <result property="seatsId" column="seats_id"/>
+
+        <collection property="flightRecords" ofType="FlightRecords">
+            <id property="flightId" column="flight_id"/>
+            <result property="flightNumber" column="flight_number"/>
+            <result property="flightLeave" column="flight_leave"/>
+            <result property="flightArrive" column="flight_arrive"/>
+            <result property="flightLeavePort" column="flight_leaveport"/>
+            <result property="flightArrivePort" column="flight_arriveport"/>
+            <result property="flightLeaveTime" column="flight_leavetime"/>
+            <result property="flightArriveTime" column="flight_arrivetime"/>
+            <result property="flightDuration" column="flight_duration"/>
+            <result property="flightPrice" column="flight_price"/>
+            <result property="cabinsId" column="cabins_id"/>
+            <result property="airlinesId" column="airlines_id"/>
+        </collection>
+
+        <collection property="cabinType" ofType="CabinType">
+            <id property="cabinId" column="cabin_id"/>
+            <result property="cabinName" column="cabin_name"/>
+            <result property="cabinStatus" column="cabin_status"/>
+            <result property="cabinUpdate" column="cabin_update"/>
+        </collection>
+
+        <collection property="airlineCompany" ofType="AirlineCompany">
+            <id property="airlineId" column="airline_id"/>
+            <result property="airlineName" column="airline_name"/>
+            <result property="airlineLogo" column="airline_logo"/>
+            <result property="airlineModel" column="airline_model"/>
+            <result property="airlineStatus" column="airline_status"/>
+            <result property="airlineUpdate" column="airline_update"/>
+        </collection>
+    </resultMap>
+
+    <!--新增订单数据-->
+    <insert id="addAirOrder">
+        insert into `air_order` values (0,#{orderNumber},'cfmgxx1568@sandbox.com',default,1,#{operatesId},#{cabinsId},#{airlinesId},#{flightsId},1,#{seatsId});
+    </insert>
+
+    <!--查询已经购买的订单记录-->
+    <select id="findByOperateId" resultMap="airOrderResultMap">
+        select  * from `air_order` o
+        inner join `flight_records` f on o.flights_id = f.flight_id
+        inner join `cabin_type` t on o.cabins_id = t.cabin_id
+        inner join `airline_company` c on o.airlines_id = c.airline_id
+        where o.operates_id = #{operatesId};
+    </select>
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.air.airbooking.mapper.AirSeatMapper">
+    <!--座位结果集映射-->
+    <resultMap id="airSeatRusultMap" type="com.air.airbooking.pojo.AirSeat">
+        <id property="seatId" column="seat_id"/>
+        <result property="seatNumber" column="seat_number"/>
+        <result property="seatStatus" column="seat_status"/>
+        <result property="operatesId" column="operates_id"/>
+        <result property="cabinsId" column="cabins_id"/>
+        <result property="airlinesId" column="airlines_id"/>
+        <result property="flightsId" column="flights_id"/>
+        <result property="seatUpdate" column="seat_update"/>
+
+        <!--映射用户对象-->
+        <collection property="operateUser" ofType="com.air.airbooking.pojo.OperateUser">
+            <id property="operateId" column="operate_id"/>
+            <result property="operateTel" column="operate_tel"/>
+            <result property="operateSurname" column="operate_surname"/>
+            <result property="operateUsername" column="operate_username"/>
+            <result property="operatePassword" column="operate_password"/>
+            <result property="operateRole" column="operate_role"/>
+            <result property="operateMember" column="operate_member"/>
+            <result property="operateStatus" column="operate_status"/>
+            <result property="operateUpdate" column="operate_update"/>
+        </collection>
+
+        <!--映射机舱类型对象-->
+        <collection property="cabinType" ofType="com.air.airbooking.pojo.CabinType">
+            <id property="cabinId" column="cabin_id"/>
+            <result property="cabinName" column="cabin_name"/>
+            <result property="cabinStatus" column="cabin_status"/>
+            <result property="cabinUpdate" column="cabin_update"/>
+        </collection>
+
+        <!--映射航空公司对象-->
+        <collection property="airlineCompany" ofType="com.air.airbooking.pojo.AirlineCompany">
+            <id property="airlineId" column="airline_id"/>
+            <result property="airlineName" column="airline_name"/>
+            <result property="airlineLogo" column="airline_logo"/>
+            <result property="airlineModel" column="airline_model"/>
+            <result property="airlineStatus" column="airline_status"/>
+            <result property="airlineUpdate" column="airline_update"/>
+        </collection>
+
+        <!--映射航班记录对象-->
+        <collection property="flightRecords" ofType="com.air.airbooking.pojo.FlightRecords">
+            <id property="flightId" column="flight_id"/>
+            <result property="flightNumber" column="flight_number"/>
+            <result property="flightLeave" column="flight_leave"/>
+            <result property="flightArrive" column="flight_arrive"/>
+            <result property="flightLeavePort" column="flight_leaveport"/>
+            <result property="flightArrivePort" column="flight_arriveport"/>
+            <result property="flightLeaveTime" column="flight_leavetime"/>
+            <result property="flightArriveTime" column="flight_arrivetime"/>
+            <result property="flightDuration" column="flight_duration"/>
+            <result property="flightPrice" column="flight_price"/>
+            <result property="cabinsId" column="cabins_id"/>
+            <result property="airlinesId" column="airlines_id"/>
+        </collection>
+    </resultMap>
+
+    <!--查询飞机座位-->
+    <select id="findAirSeat" resultMap="airSeatRusultMap">
+        select * from `air_seat` s
+        inner join `operate_user` u on s.operates_id = u.operate_id
+        inner join `cabin_type` t on s.cabins_id = t.cabin_id
+        inner join `airline_company` c on s.airlines_id = c.airline_id
+        inner join `flight_records` r on s.flights_id = r.flight_id
+        where  s.flights_id = #{flightsId} order by seat_id
+    </select>
+
+    <select id="findCabinsId" resultType="int">
+        select s.cabins_id from `air_seat` s
+        inner join `operate_user` u on s.operates_id = u.operate_id
+        inner join `cabin_type` t on s.cabins_id = t.cabin_id
+        inner join `airline_company` c on s.airlines_id = c.airline_id
+        inner join `flight_records` r on s.flights_id = r.flight_id
+        where s.operates_id = #{operateId} and s.flights_id = #{flightsId} and s.seat_status = 0 group by s.cabins_id;
+    </select>
+
+    <update id="updateAirOrderStatus">
+        update air_seat set seat_status = 1
+        where seat_id = #{seatId}
+    </update>
+
+    <select id="selectSeatOne" resultType="int">
+        select  count(1) from `air_seat` where flights_id = #{flightsId} and seat_status = 0;
+    </select>
+</mapper>

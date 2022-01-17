@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.air.airbooking.mapper.UserInfoMapper">
+    <resultMap id="userInfoResultMap" type="com.air.airbooking.pojo.UserInfo">
+        <id property="userId" column="user_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="userPhone" column="user_phone"/>
+        <result property="userSex" column="user_sex"/>
+        <result property="cersId" column="cers_id"/>
+        <result property="userCard" column="user_card"/>
+
+        <!--关联查询-->
+        <collection property="certificateInfos" ofType="com.air.airbooking.pojo.CertificateInfo">
+            <id property="cerId" column="cer_id"/>
+            <result property="cerName" column="cer_name"/>
+        </collection>
+    </resultMap>
+
+    <!--新增购票用户信息-->
+    <insert id="addUserInfo" parameterType="com.air.airbooking.pojo.UserInfo" useGeneratedKeys="true" keyProperty="userId">
+        insert into `user_info` values(0,#{userName},#{userPhone},#{userSex},#{cersId},#{userCard});
+    </insert>
+</mapper>

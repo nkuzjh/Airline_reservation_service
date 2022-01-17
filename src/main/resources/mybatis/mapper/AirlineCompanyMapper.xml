@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.air.airbooking.mapper.AirlineCompanyMapper">
+
+    <!--航空公司结果集映射-->
+    <resultMap id="airLineCompany" type="com.air.airbooking.pojo.AirlineCompany">
+        <id property="airlineId" column="airline_id"/>
+        <result property="airlineName" column="airline_name"/>
+        <result property="airlineLogo" column="airline_logo"/>
+        <result property="airlineModel" column="airline_model"/>
+        <result property="airlineStatus" column="airline_status"/>
+        <result property="airlineUpdate" column="airline_update"/>
+    </resultMap>
+
+
+
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.air.airbooking.mapper.TicketDetailsMapper">
+    <!--机票详情结果集映射-->
+    <resultMap id="ticketDetailsResultMap" type="com.air.airbooking.pojo.TicketDetails">
+        <id property="ticketId" column="ticket_id"/>
+        <result property="ticketNumber" column="ticket_number"/>
+        <result property="operateId" column="operates_id"/>
+        <result property="cabinsId" column="cabins_id"/>
+        <result property="airlinesId" column="airlines_id"/>
+        <result property="flightsId" column="flights_id"/>
+        <result property="ticketStatus" column="ticket_status"/>
+        <result property="ticketUpdate" column="ticket_update"/>
+
+        <collection property="operateUser" ofType="com.air.airbooking.pojo.OperateUser">
+            <id property="operateId" column="operate_id"/>
+            <result property="operateTel" column="operate_tel"/>
+            <result property="operateSurname" column="operate_surname"/>
+            <result property="operateUsername" column="operate_username"/>
+            <result property="operatePassword" column="operate_password"/>
+            <result property="operateRole" column="operate_role"/>
+            <result property="operateMember" column="operate_member"/>
+            <result property="operateStatus" column="operate_status"/>
+            <result property="operateUpdate" column="operate_update"/>
+        </collection>
+
+        <collection property="cabinType" ofType="com.air.airbooking.pojo.CabinType">
+            <id property="cabinId" column="cabin_id"/>
+            <result property="cabinName" column="cabin_name"/>
+            <result property="cabinStatus" column="cabin_status"/>
+            <result property="cabinUpdate" column="cabin_update"/>
+        </collection>
+
+        <collection property="airlineCompany" ofType="com.air.airbooking.pojo.AirlineCompany">
+            <id property="airlineId" column="airline_id"/>
+            <result property="airlineName" column="airline_name"/>
+            <result property="airlineLogo" column="airline_logo"/>
+            <result property="airlineModel" column="airline_model"/>
+            <result property="airlineStatus" column="airline_status"/>
+            <result property="airlineUpdate" column="airline_update"/>
+        </collection>
+
+        <collection property="flightRecords" ofType="com.air.airbooking.pojo.FlightRecords">
+            <id property="flightId" column="flight_id"/>
+            <result property="flightNumber" column="flight_number"/>
+            <result property="flightLeave" column="flight_leave"/>
+            <result property="flightArrive" column="flight_arrive"/>
+            <result property="flightLeavePort" column="flight_leaveport"/>
+            <result property="flightArrivePort" column="flight_arriveport"/>
+            <result property="flightLeaveTime" column="flight_leavetime"/>
+            <result property="flightArriveTime" column="flight_arrivetime"/>
+            <result property="flightDuration" column="flight_duration"/>
+            <result property="flightPrice" column="flight_price"/>
+            <result property="cabinsId" column="cabins_id"/>
+            <result property="airlinesId" column="airlines_id"/>
+        </collection>
+    </resultMap>
+
+    <!--新增机票详情信息-->
+    <insert id="addTicketDetails">
+        insert into `ticket_details` values (0,#{ticketNumber},#{operateId},#{cabinsId},#{airlinesId},#{flightsId},1,default);
+    </insert>
+
+    <select id="findTicketDetails" resultMap="ticketDetailsResultMap">
+        select * from `ticket_details` d
+        inner join `operate_user` u on d.operates_id = u.operate_id
+        inner join `cabin_type` t on d.cabins_id = t.cabin_id
+        inner join `airline_company` c on d.airlines_id = c.airline_id
+        inner join `flight_records` r on d.flights_id = r.flight_id
+        where d.operates_id = #{operateId};
+    </select>
+</mapper>

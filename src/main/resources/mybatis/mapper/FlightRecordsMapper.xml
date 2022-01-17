@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="GBK"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.air.airbooking.mapper.FlightRecordsMapper">
+    <!--航班信息结果集映射-->
+    <resultMap id="flightRecordsResultMapper" type="com.air.airbooking.pojo.FlightRecords">
+        <id property="flightId" column="flight_id"/>
+        <result property="flightNumber" column="flight_number"/>
+        <result property="flightLeave" column="flight_leave"/>
+        <result property="flightArrive" column="flight_arrive"/>
+        <result property="flightLeavePort" column="flight_leaveport"/>
+        <result property="flightArrivePort" column="flight_arriveport"/>
+        <result property="flightLeaveTime" column="flight_leavetime"/>
+        <result property="flightArriveTime" column="flight_arrivetime"/>
+        <result property="flightDuration" column="flight_duration"/>
+        <result property="flightPrice" column="flight_price"/>
+        <result property="cabinsId" column="cabins_id"/>
+        <result property="airlinesId" column="airlines_id"/>
+
+        <!--关联映射航空公司-->
+        <collection property="airlineCompany" ofType="com.air.airbooking.pojo.AirlineCompany">
+            <id property="airlineId" column="airline_id"/>
+            <result property="airlineName" column="airline_name"/>
+            <result property="airlineLogo" column="airline_logo"/>
+            <result property="airlineModel" column="airline_model"/>
+            <result property="airlineStatus" column="airline_status"/>
+            <result property="airlineUpdate" column="airline_update"/>
+        </collection>
+        <!--关联映射机舱类型-->
+        <collection property="cabinType" ofType="com.air.airbooking.pojo.CabinType">
+            <id property="cabinId" column="cabin_id"/>
+            <result property="cabinName" column="cabin_name"/>
+            <result property="cabinStatus" column="cabin_status"/>
+            <result property="cabinUpdate" column="cabin_update"/>
+        </collection>
+    </resultMap>
+    <!--
+        关联查询->>>航空公司表->>>机舱信息表
+        查询机票详情信息
+    -->
+    <select id="findFlightRecords" resultMap="flightRecordsResultMapper">
+        select f.flight_id,
+               f.flight_number,
+               f.flight_leave,
+               f.flight_arrive,
+               f.flight_leaveport,
+               f.flight_arriveport,
+               f.flight_leavetime,
+               f.flight_arrivetime,
+               f.flight_duration,
+               f.flight_price,
+               f.cabins_id,
+               f.airlines_id,
+               c.airline_id,
+               c.airline_name,
+               c.airline_logo,
+               airline_model,
+               airline_status,
+               airline_update,
+               t.cabin_id,
+               t.cabin_name,
+               t.cabin_status,
+               t.cabin_update
+        from `flight_records` f
+                     inner join `airline_company` c on f.airlines_id = c.airline_id
+                     inner join `cabin_type` t on f.cabins_id = t.cabin_id
+        where f.cabins_id = 1 and f.flight_leavetime >'2021-04-24 12:00:0'
+    </select>
+
+    <!--
+        按照ID关联查询->>>航空公司表->>>机舱信息表
+        查询机票详情信息
+    -->
+    <select id="findFlightRecordsById" resultMap="flightRecordsResultMapper">
+        select f.flight_id,
+               f.flight_number,
+               f.flight_leave,
+               f.flight_arrive,
+               f.flight_leaveport,
+               f.flight_arriveport,
+               f.flight_leavetime,
+               f.flight_arrivetime,
+               f.flight_duration,
+               f.flight_price,
+               f.cabins_id,
+               f.airlines_id,
+               c.airline_id,
+               c.airline_name,
+               c.airline_logo,
+               c.airline_model,
+               c.airline_status,
+               c.airline_update,
+               t.cabin_id,
+               t.cabin_name,
+               t.cabin_status,
+               t.cabin_update from `flight_records` f
+        inner join `airline_company` c on f.airlines_id = c.airline_id
+        inner join `cabin_type` t on f.cabins_id = t.cabin_id
+        where f.flight_number = #{flightNumber}
+    </select>
+
+    <!--根据ID查询始发地到达地-->
+    <select id="findFlightRecordsByIdCity" resultMap="flightRecordsResultMapper">
+        select f.flight_id,
+               f.flight_number,
+               f.flight_leave,
+               f.flight_arrive,
+               f.flight_leaveport,
+               f.flight_arriveport,
+               f.flight_leavetime,
+               f.flight_arrivetime,
+               f.flight_duration,
+               f.flight_price,
+               f.cabins_id,
+               f.airlines_id,
+               c.airline_id,
+               c.airline_name,
+               c.airline_logo,
+               c.airline_model,
+               c.airline_status,
+               c.airline_update,
+               t.cabin_id,
+               t.cabin_name,
+               t.cabin_status,
+               t.cabin_update from `flight_records` f
+               inner join `airline_company` c on f.airlines_id = c.airline_id
+               inner join `cabin_type` t on f.cabins_id = t.cabin_id
+        where f.flight_id = #{flightId}
+    </select>
+
+    <!-- 查询飞机票信息-->
+    <select id="findFlightRecordsByMap" resultMap="flightRecordsResultMapper">
+        select f.flight_id,
+               f.flight_number,
+               f.flight_leave,
+               f.flight_arrive,
+               f.flight_leaveport,
+               f.flight_arriveport,
+               f.flight_leavetime,
+               f.flight_arrivetime,
+               f.flight_duration,
+               f.flight_price,
+               f.cabins_id,
+               f.airlines_id,
+               c.airline_id,
+               c.airline_name,
+               c.airline_logo,
+               airline_model,
+               airline_status,
+               airline_update,
+               t.cabin_id,
+               t.cabin_name,
+               t.cabin_status,
+               t.cabin_update
+        from `flight_records` f
+        inner join `airline_company` c on f.airlines_id = c.airline_id
+        inner join `cabin_type` t on f.cabins_id = t.cabin_id
+        <where>
+            <if test="flightLeave != null and flightLeave!= '' ">
+                AND f.flight_leave = #{flightLeave}
+            </if>
+            <if test="flightArrive != null and flightArrive!=''">
+                AND f.flight_arrive = #{flightArrive}
+            </if>
+            <if test="flightLeaveTime != null and flightLeaveTime != ''">
+                AND f.flight_leavetime >= #{flightLeaveTime}
+            </if>
+            <if test="flightArriveTime != null and flightArriveTime !=''">
+                AND str_to_date(f.flight_arrivetime, '%Y-%m-%d') = #{flightArriveTime}
+            </if>
+            <if test="flightNumber != null and flightNumber != ''">
+                AND f.flight_number = #{flightNumber}
+            </if>
+        </where>
+    </select>
+
+    <!--查询飞机票务信息-->
+    <select id="findFlightRecordsByIdFlightRecords" resultMap="flightRecordsResultMapper">
+        select f.flight_id,
+               f.flight_number,
+               f.flight_leave,
+               f.flight_arrive,
+               f.flight_leaveport,
+               f.flight_arriveport,
+               f.flight_leavetime,
+               f.flight_arrivetime,
+               f.flight_duration,
+               f.flight_price,
+               f.cabins_id,
+               f.airlines_id,
+               c.airline_id,
+               c.airline_name,
+               c.airline_logo,
+               c.airline_model,
+               c.airline_status,
+               c.airline_update,
+               t.cabin_id,
+               t.cabin_name,
+               t.cabin_status,
+               t.cabin_update from `flight_records` f
+               inner join `airline_company` c on f.airlines_id = c.airline_id
+               inner join `cabin_type` t on f.cabins_id = t.cabin_id
+        where f.flight_id = #{flightId}
+    </select>
+
+    <select id="findFlightRecordsSelectOne" resultMap="flightRecordsResultMapper">
+        select f.flight_id,
+        f.flight_number,
+        f.flight_leave,
+        f.flight_arrive,
+        f.flight_leaveport,
+        f.flight_arriveport,
+        f.flight_leavetime,
+        f.flight_arrivetime,
+        f.flight_duration,
+        f.flight_price,
+        f.cabins_id,
+        f.airlines_id,
+        c.airline_id,
+        c.airline_name,
+        c.airline_logo,
+        airline_model,
+        airline_status,
+        airline_update,
+        t.cabin_id,
+        t.cabin_name,
+        t.cabin_status,
+        t.cabin_update
+        from `flight_records` f
+        inner join `airline_company` c on f.airlines_id = c.airline_id
+        inner join `cabin_type` t on f.cabins_id = t.cabin_id
+        <where>
+            <if test="flightLeave != null and flightLeave!= '' ">
+                AND f.flight_leave = #{flightLeave}
+            </if>
+            <if test="flightArrive != null and flightArrive!=''">
+                AND f.flight_arrive = #{flightArrive}
+            </if>
+            <if test="flightLeaveTime != null and flightLeaveTime != ''">
+                AND f.flight_leavetime >= #{flightLeaveTime}
+            </if>
+            <if test="flightArriveTime != null and flightArriveTime !=''">
+                AND str_to_date(f.flight_arrivetime, '%Y-%m-%d') = #{flightArriveTime}
+            </if>
+            <if test="flightNumber != null and flightNumber != ''">
+                AND f.flight_number = #{flightNumber}
+            </if>
+        </where>
+    </select>
+</mapper>
